@@ -23,7 +23,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 h-[90vh] overflow-scroll">
       <StatsGrid />
 
       <div className="grid  lg:grid-cols-2 gap-6">
