@@ -1,16 +1,17 @@
 export const mfConfig = {
   name: "dashboard",
-  filename: "remoteEntry.js",
+  filename: "dashboard.js",
   exposes: {
     "./App": "./src/App.tsx",
+    "./tailwindStyles": "./src/index.css"
   },
   shared: {
-    react: { singleton: true, eager: true },
-    "react-dom": { singleton: true, eager: true },
-    "react-router-dom": { singleton: true, eager: true },
-    "react-redux": { singleton: true, eager: true },
-    "@reduxjs/toolkit": { singleton: true, eager: true },
-    "lucide-react": { singleton: true, eager: true },
+    react: { singleton: true, requiredVersion: false },
+    "react-dom": { singleton: true, requiredVersion: false },
+    "react-router-dom": { singleton: true, requiredVersion: false },
+    "react-redux": { singleton: true, requiredVersion: false },
+    "@reduxjs/toolkit": { singleton: true, requiredVersion: false },
+    "lucide-react": { singleton: true, requiredVersion: false },
   },
   dts: false,
 };

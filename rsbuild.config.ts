@@ -10,7 +10,7 @@ export default defineConfig({
   },
 
   output: {
-    publicPath: 'http://localhost:3001/',
+    publicPath: 'http://localhost:3001/', // REQUIRED for remote
   },
 
   tools: {
@@ -24,9 +24,9 @@ export default defineConfig({
       experiments: {
         moduleFederation: true,
       },
-      output: {
-        uniqueName: 'dashboard',
-        publicPath: 'auto',
+       output: {
+        uniqueName: 'dashboard',  // ← ADD THIS
+        publicPath: 'auto',       // ← ADD THIS
       },
       plugins: [
         new ModuleFederationPlugin({
@@ -42,8 +42,6 @@ export default defineConfig({
             'react-dom': { singleton: true, eager: true },
             'react-router-dom': { singleton: true, eager: true },
             'lucide-react': { singleton: true, eager: true },
-            '@reduxjs/toolkit': { singleton: true, eager: true },
-            'react-redux': { singleton: true, eager: true },
           },
 
           dts: false,

@@ -141,7 +141,7 @@ const TicketVolumeCard = () => {
 
       <div className="p-5 bg-gray-50 rounded-lg mt-4">
         <ResponsiveContainer width="100%" height={280}>
-          <AreaChart data={data}>
+          <AreaChart data={data} key={inView ? "visible" : "hidden"}>
             <defs>
               <linearGradient id="colorTickets" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#7c43df" stopOpacity={0.3} />
@@ -174,7 +174,7 @@ const TicketVolumeCard = () => {
               fill="url(#colorTickets)"
               animationBegin={0}
               animationDuration={1500}
-              isAnimationActive={inView}
+              isAnimationActive={true}
             />
           </AreaChart>
         </ResponsiveContainer>
