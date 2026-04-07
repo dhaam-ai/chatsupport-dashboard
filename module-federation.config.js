@@ -14,7 +14,9 @@ export const mfConfig = {
     "lucide-react": { singleton: true, requiredVersion: false },
   },
   dts: {
-    generateTypes: process.env.NODE_ENV === "production",
+    generateTypes:
+      process.env.NODE_ENV === "production" &&
+      process.env.MF_GENERATE_TYPES === "true",
     consumeTypes: false,
   },
 };
