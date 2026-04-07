@@ -105,6 +105,7 @@ export default defineConfig({
     new rspack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(isLocalDev ? 'development' : 'production'),
       'process.env.REACT_APP_ENV': JSON.stringify(appEnv),
+      'process.env': JSON.stringify({ NODE_ENV: isLocalDev ? 'development' : 'production', REACT_APP_ENV: appEnv }),
     }),
     
     new ModuleFederationPlugin(mfConfig),

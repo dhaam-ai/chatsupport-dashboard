@@ -5,7 +5,16 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-
 body {
   background: linear-gradient(to bottom right, #faf5ff, #f5f3ff);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#app {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
