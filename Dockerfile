@@ -21,8 +21,6 @@ COPY package.json ./
 ARG CACHEBUST=1
 
 # Install project dependencies
-COPY ../chatsupport-ui /chatsupport-ui
-
 RUN npm install
 
 # Copy the rest of your application code into the working directory
