@@ -1,22 +1,16 @@
 export const mfConfig = {
   name: "dashboard",
-  filename: "dashboard.js",
+  filename: "remoteEntry.js",
   exposes: {
     "./App": "./src/App.tsx",
-    "./tailwindStyles": "./src/index.css"
   },
   shared: {
-    react: { singleton: true, requiredVersion: false },
-    "react-dom": { singleton: true, requiredVersion: false },
-    "react-router-dom": { singleton: true, requiredVersion: false },
-    "react-redux": { singleton: true, requiredVersion: false },
-    "@reduxjs/toolkit": { singleton: true, requiredVersion: false },
-    "lucide-react": { singleton: true, requiredVersion: false },
+    react: { singleton: true, eager: true },
+    "react-dom": { singleton: true, eager: true },
+    "react-router-dom": { singleton: true, eager: true },
+    "react-redux": { singleton: true, eager: true },
+    "@reduxjs/toolkit": { singleton: true, eager: true },
+    "lucide-react": { singleton: true, eager: true },
   },
-  dts: {
-    generateTypes:
-      process.env.NODE_ENV === "production" &&
-      process.env.MF_GENERATE_TYPES === "true",
-    consumeTypes: false,
-  },
+  dts: false,
 };
