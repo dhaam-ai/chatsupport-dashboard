@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y git openssh-client && rm -rf /var/lib/a
 RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 # Copy package.json for better dependency caching
-COPY package.json ./
+COPY package.json package-lock.json* ./
 
 # Add this line before the cached RUN command
 ARG CACHEBUST=1
