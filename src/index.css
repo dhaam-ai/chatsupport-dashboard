@@ -10,3 +10,9 @@
 body {
   background: linear-gradient(to bottom right, #faf5ff, #f5f3ff);
 }
+/* Federated-module scope root: Tailwind utilities are prefixed with this
+   class (postcss-scope-tailwind.mjs) so they only apply inside this module. */
+.cs-dashboard-root {
+  height: 100%;
+  width: 100%;
+}
