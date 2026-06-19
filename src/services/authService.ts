@@ -9,6 +9,25 @@
 const AUTH_API_BASE_URL = 'https://dev-nexus.dhaamai.com/api/v1';
 const DEFAULT_TENANT_ID = '12775';
 
+/** Dynamic tenant: reads localStorage key written by chatsupport-main after login/domain resolution. */
+function getTenantId(): string {
+  const stored = localStorage.getItem('tenantId');
+  if (stored) return stored;
+  try {
+    const token = localStorage.getItem('id_token');
+    if (token) {
+      const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(atob(b64));
+      const gn: string = payload.given_name ?? '';
+      if (gn.includes('::')) {
+        const t = gn.split('::')[0]; // "tenantId::roleId::userId"
+        if (/^\d+$/.test(t)) return t;
+      }
+    }
+  } catch { /* ignore */ }
+  return DEFAULT_TENANT_ID;
+}
+
 export interface RefreshTokenRequest {
   user_id: string;
   tenant_id: number;
@@ -30,12 +49,10 @@ export interface RefreshTokenResponse {
 
 class AuthService {
   private readonly baseUrl: string;
-  private readonly tenantId: string;
   private refreshPromise: Promise<boolean> | null = null;
 
-  constructor(baseUrl = AUTH_API_BASE_URL, tenantId = DEFAULT_TENANT_ID) {
+  constructor(baseUrl = AUTH_API_BASE_URL) {
     this.baseUrl = baseUrl;
-    this.tenantId = tenantId;
   }
 
   async refreshToken(): Promise<boolean> {
@@ -53,13 +70,25 @@ class AuthService {
       const rt = localStorage.getItem('refresh_token');
       if (!rt) { console.warn('[AuthService] No refresh token'); return false; }
       const user = this.getUser();
-      let userId = user?.user_id || user?.id || '';\n    // Always prefer integer userId from JWT given_name\n    try {\n      const idTok = localStorage.getItem('id_token');\n      if (idTok) {\n        const b64 = idTok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');\n        const decoded = JSON.parse(atob(b64));\n        const gn = decoded.given_name ?? '';\n        // Only use if it's an integer (not a UUID)\n        const intId = gn.includes('::') ? gn.split('::')[0] : '';\n        if (/^\\d+$/.test(intId)) {\n          userId = intId;\n          console.log('[AuthService] user_id (int) from JWT:', userId);\n        }\n      }\n    } catch { /* ignore malformed token */ }
       const role = user?.role_id || user?.roles?.[0]?.role_id || 1;
-      // Fallback: decode user_id from the id_token JWT (given_name = "userId::tenantId::roleId")
+
+      // Extract user_id: JWT given_name is "tenantId::roleId::userId" for chatsupport
+      let userId = user?.user_id || user?.id || '';
       if (!userId) {
-        const decoded = this.getDecodedUser();
-        userId = decoded?.userId || '';
-        if (userId) console.log('[AuthService] user_id decoded from JWT:', userId);
+        try {
+          const idTok = localStorage.getItem('id_token');
+          if (idTok) {
+            const b64 = idTok.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+            const decoded = JSON.parse(atob(b64));
+            const gn: string = decoded.given_name ?? '';
+            const parts = gn.split('::');
+            const fromJwt = parts[2] ?? ''; // index 2 = userId
+            if (/^\d+$/.test(fromJwt)) {
+              userId = fromJwt;
+              console.log('[AuthService] user_id from JWT:', userId);
+            }
+          }
+        } catch { /* ignore malformed token */ }
       }
       if (!userId) { console.warn('[AuthService] No user_id for refresh'); return false; }
 
@@ -68,7 +97,7 @@ class AuthService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: String(userId),
-          tenant_id: parseInt(String(this.tenantId), 10) || 12775,
+          tenant_id: parseInt(getTenantId(), 10),
           role: typeof role === 'number' ? role : parseInt(String(role), 10) || 1,
           refresh_token: rt,
         }),
